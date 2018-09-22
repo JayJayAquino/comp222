@@ -5,13 +5,14 @@ int freq_of_machine;
 int cycle_total = 0;
 int instruction_total = 0;
 int num_of_classes;
-int cpi_avg;
+int cpi_class;
+float average;
+float execution_time;
 /*********************************************************/
 void enter_params()
 {
   /* declare local var's and initialize*/
   int i;
-  int cpi_class;
   int instruction_count;
 
   /* prompt for # instruction classes & frequency of machine */
@@ -36,13 +37,13 @@ return;
 void calc_avg_cpi()
 {
   /* declare local var's */
-  float average;
+
   /* calculate CPI average */
-  average = (cycle_total/instruction_total)*1.0;
+  average = (cycle_total*1.0)/(instruction_total*1.0);
   /* Note: typecast integers to floats via (float)int_var */
 
   /* Print out result */
-  printf("The average CPI of the sequence is: %f\n\n", average);
+  printf("The average CPI of the sequence is: %.2f\n\n", average);
 
 return;
 }
@@ -53,8 +54,9 @@ void calc_total_exec_time()
   /* declare local var's */
 
   /* calculate total execution time */
-
+  execution_time = ((cycle_total*1.0)/(freq_of_machine*1.0))*1000;
   /* Print out result */
+  printf("The total CPU time of the sequence is: %.2f (msec)\n\n", execution_time);
 
 return;
 }
@@ -63,10 +65,11 @@ return;
 void calc_mips()
 {
   /* declare local var's */
-
+  float MIPS;
   /* calculate MIPS */
-
+  MIPS = ((instruction_total*1.0)/(execution_time*1.0))*1000;
   /* Print out result */
+  printf("The total MIPS of the sequence is: %.2f\n\n", MIPS);
 
 return;
 }
