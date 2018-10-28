@@ -14,8 +14,10 @@ char *hamming_string = NULL;
 void set_params()
 {
 /* prompt for maximum hamming code length and for even/odd parity (even/odd)*/
-  //prinf
-  //scanf
+  printf("Enter the maximum length: ");
+  scanf("%d", &max_length);
+  printf("Enter the parity (0=even, 1=odd): ");
+  scanf("%d", &hamming_parity);
 /* allocate memory for hamming string based on maximum length and size of a character element*/
   hamming_string = (char *)malloc(max_length * sizeof(char));
 
@@ -31,16 +33,19 @@ void hamming_code()
   int j; //starting bit of a sequence of consecutive bits
   int k; //each bit in a consecutive sequence
   int parity_check;
+  int error_bit = 0;
+  int correct_bit;
+  int num_parity;
 
 /* prompt for hamming code as a "string"*/
-  //printf
+  printf("Enter the Hamming code: ");
   scanf("%s", hamming_string);
 /* Determine actual Hamming code length & number of parity bits*/
   actual_length = strlen(hamming_string);
   //this line is optional
   num_parity = ceil(log(actual_length) / log(2));
+  printf("number parity: %d\n", &num_parity);
 /* OUTER LOOP: for each parity bit in the Hamming code*/
-
  /* BEGIN OF OUTER LOOP */
   for(i = 1; i < actual_length; i = i*2){
 
@@ -55,12 +60,20 @@ void hamming_code()
             parity_check ^= (int)(hamming_string[actual_length - k] - '0');
           }//k
 				/* update parity checking by including result for parity bit checked in total */
-        // error_bit = error_bit...;
+        if(parity_check == 1){
+          error_bit = error_bit + k;
+        }
 			}//i
-} /* END OF OUTER LOOP
+    } /* END OF OUTER LOOP
 
 /* report error in hamming code based on result from parity bits or report no error if none */
-// ...hamming_string[actual_length - error_bit]...
+  if(error_bit != 0){
+    correct_bit = hamming_string[actual_length - error_bit];
+    printf("There is an error in bit: %d\n", &correct_bit);
+  }else{
+    printf("There is no bit error\n");
+  }
+
 
 
 /* correct hamming code by flipping error bit (if necessary)*/
@@ -91,13 +104,13 @@ int main()
     scanf("%d", &choice);
 
     switch(choice){
-      case 1: enter_params();
-      break;
-      case 2: hamming_code();
-      break;
-      case 3: printf("Quitting...\n");
-      free_haming();
-      break;
+      case 1: {set_params();
+      break;}
+      case 2: {hamming_code();
+      break;}
+      case 3: {printf("Quitting...\n");
+      free_hamming();
+      break;}
 
       default: printf("Invalid Entry\n");
     }
