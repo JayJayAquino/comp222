@@ -1,27 +1,27 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> // for pointers and null
 #include <math.h>
 #include <string.h>
 
 /* declare global vars */
 int max_length, hamming_parity, num_parity;
-
 /* define hamming string as a dynamic array of characters */
 char *hamming_string = NULL;
 
 
 /***************************************************************/
-void set_params()
+void enter_params()
 {
-/* prompt for maximum hamming code length and for even/odd parity (even/odd)*/
-  printf("Enter the maximum length: ");
-  scanf("%d", &max_length);
-  printf("Enter the parity (0=even, 1=odd): ");
-  scanf("%d", &hamming_parity);
-/* allocate memory for hamming string based on maximum length and size of a character element*/
-  hamming_string = (char *)malloc(max_length * sizeof(char));
+    /* prompt for maximum hamming code length and for even/odd parity (even/odd)*/
+    printf("Enter the maximum length: ");
+    scanf("%d", &max_length);
+    printf("Enter the parity (0 = even, 1 = odd): ");
+    scanf("%d", &hamming_parity);
 
-  return;
+    /* allocate memory for hamming string based on maximum length and size of a character element*/
+    hamming_string = (char *)malloc(max_length * sizeof(char));
+
+    return;
 }
 
 /***************************************************************/
@@ -79,39 +79,40 @@ void check_hamming()
 
 return;
 }
-//optional
-void free_hamming()
-{
-  if(hamming_string != NULL){
-    free(hamming_string);
-  }
-  return;
-}
+
 /***************************************************************/
-//REMEMBER TO RUN LIKE GCC .C -lm
+void quit(char *hamming_string) {
+    if (hamming_string != NULL)
+        free(hamming_string);
+    return;
+}
+
+/***************************************************************/
 int main()
 {
-  int choice = 0;
-/* print out menu, prompt for choice, and call appropriate procedure until user quits */
-  while(choice != 3){
-    printf("Error detection/correction:\n");
-    printf("1) Enter Paramters\n");
-    printf("2) Check Hamming Code\n");
-    printf("3) Quit\n");
-    printf("\nEnter Selection: ");
-    scanf("%d", &choice);
+    /* print out menu, prompt for choice, and call appropriate procedure until user quits */
+    int choice = 0;
 
-    switch(choice){
-      case 1: {set_params();
-      break;}
-      case 2: {check_hamming();
-      break;}
-      case 3: {printf("Quitting...\n");
-      free_hamming();
-      break;}
+    while (choice != 3) {
+        printf ("\nError detection/correction\n");
+        printf ("----------------------------\n");
+        printf ("1) Enter parameters\n");
+        printf ("2) Check Hamming code\n");
+        printf ("3) Quit Program\n");
 
-      default: printf("Invalid Entry\n");
+        printf("\nEnter Selection: ");
+        scanf ("%d", &choice);
+
+        switch (choice) {
+            case 1: enter_params(); //finished
+                break;
+            case 2: check_hamming();
+                break;
+            case 3: quit(hamming_string);
+                break;
+            default:
+                printf("Invalid Number");
+        }
     }
-  }
-return 1;
+    return 1;
 }
