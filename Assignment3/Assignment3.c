@@ -25,7 +25,7 @@ void set_params()
 }
 
 /***************************************************************/
-void check_hamming()
+void calc_hamming()
 {
   /* declare local vars */
   int actual_length;
@@ -100,7 +100,7 @@ int main()
     switch(choice){
       case 1: {set_params();
       break;}
-      case 2: {check_hamming();
+      case 2: {calc_hamming();
       break;}
       case 3: {printf("Quitting...\n");
       free_hamming();
