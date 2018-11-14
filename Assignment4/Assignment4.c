@@ -32,7 +32,7 @@ void set_params()
   num_entries = mm_size/page_size;
 
   /* Allocate and initialize page table based on number of entries */
-  page_table = (entry*)malloc(num_entries * sizeof(entry));
+  pt = (entry*)malloc(num_entries * sizeof(entry));
   //initialize each value with for loop, index's are 0-3
   for(int i = 0; i < 4; i++){
     pt[i].vp = -1;
@@ -47,58 +47,68 @@ return;
 /***************************************************************/
 void mapping()
 {
-/* Declare local var's */
-  int virtual_address, physical_address;
-  int offset;
-  int temp_pf, temp_vp;
-  int i,j,k;
-/* Prompt for virtual address */
-  printf("Enter virtual memory address to access: ");
-  scanf("%d", &virtual_address);
-/* Translate virtual mem addr to virtual page and offset*/
-  vp = virtual_address/page_size;
-  offset = virtual_address % page_size;
-/* Check for end of table, unallocated entry, or matched entry in table
- while none of three cases, keep looping */
- while((i < num_entries) && (pt[i].vp != -1) && (pt[i].vp != vp)){
-  i++;
-}
-/* In case of end of table, replace either LRU or FIFO entry (top entry in page table), print message */
-  if(i == num_entries){
-    temp_pf = pt[0].pf;
-    temp_vp = pt[0].vp;
-    for(k = 0; k < num_entries - 1; k++){
-      pt[k].vp = pt[k+1].vp;
-      pt[k].pf = pt[k+1].pf;
-    }
-    pt[num_entries - 1].vp = vp;
-    pt[num_entries - 1].pf = pf;
-    printf("Page fault!\n");
-  }else if(pt[i].vp == -1){
-    pt[i].vp = vp;
-    pt[i].pf = i;
-    printf("Page fault!\n");
-  }
-/* In case of unallocated entry, set entry according to virtal page and page frame, print message */
+  int VMAddress;//From user
+	int realAddress;//Generated
+	int vp;
+	int offset;
 
-/* In case of hit in page table, calculate physical address and print message, update page table if LRU policy */
-  if(pt[i].vp == vp){
-    pa = (pt[i].vp * page_size) + offset;
-    pf = pt[0].pf;
-    if(policy == 0){
-      for(k = 0; k <= num_entries - 2; k++){
-        if(...){
-          break;
-        }
-        pt[k] = pt[k+1];
-      }
-      pt[num_entries - 1].vp = vp;
-      pt[num_entries - 1].pf = pf;
-    } //LRU
-    printf("Virtual Address: %d maps to physical address %d",
-     virtual_address, physical_address);
 
-  }
+	printf("Enter virtual memory address to access: ");
+	scanf("%d", &VMAddress);
+
+	//Calculate offset and virtual page
+	offset = VMAddress % page_size;
+	vp = VMAddress / page_size;
+
+	int i;
+	for (i = 0; i < num_entries; i++) {
+		//if there is a hit (page in pt)
+		if (pt[i].vp == vp) {
+			realAddress = (pt[i].pf * page_size) + offset;
+			//LRU
+			if (policy == 0) {
+				int pfHolder;//placeholder for pf
+				int vpHolder;//placeholder for vp
+				int g;
+				for (g = i; g < num_entries - 1; g++) {
+					//Shift page table at index of hit
+					pfHolder = pt[g].pf;
+					vpHolder = pt[g].vp;
+					pt[g] = pt[g + 1];
+					pt[g + 1].pf = pfHolder;
+					pt[g + 1].vp = vpHolder;
+				}
+			}
+			printf("Virtual Address: %d maps to physical address %d", VMAddress,realAddress);
+			i = num_entries-1;
+		}
+		//if theres a blank space
+		else if (pt[i].vp == -1) {
+			//map virtual page to generated virtual page
+			pt[i].vp = vp;
+			//map pf to current index
+			pt[i].pf = i;
+			printf("Page fault!\n");
+			//set index to last element
+			i = num_entries - 1;
+		}
+		else if (i == num_entries - 1) {//condition for last element
+			pt[0].vp = vp;
+			int pfHolder;//placeholder for pf
+			int vpHolder;//placeholder for vp
+			int h;
+			for (h = 0; h < num_entries - 1; h++) {
+				//shift page table from beginning
+				pfHolder = pt[h].pf;
+				vpHolder = pt[h].vp;
+				pt[h] = pt[h + 1];
+				pt[h + 1].pf = pfHolder;
+				pt[h + 1].vp = vpHolder;
+			}
+			printf("Page Fault! \n");
+		}
+
+	}
 
 return;
 }
@@ -106,18 +116,18 @@ return;
 
 
 /***************************************************************/
-print_page_table()
+void print_page_table()
 {
 /* Declare local var's */
-
+  int i;
 /* For each valid entry in page table */
 printf("\n-----------------\n");
 printf("| VP   | PF   |\n");
 printf("-------------------\n");
-for (i = 0; i < numPages; i++) {
-  if (memory[i].pageFrame != -1 && memory[i].virtualPage != -1) {//To avoid unnecessary printing
-    printf("| %d    |", memory[i].virtualPage);
-    printf(" %d    |", memory[i].pageFrame);
+for (i = 0; i < num_entries; i++) {
+  if (pt[i].pf != -1 && pt[i].vp != -1) {//To avoid unnecessary printing
+    printf("| %d    |", pt[i].vp);
+    printf(" %d    |", pt[i].pf);
     printf("\n----------------------\n");
   }
 }
@@ -136,20 +146,22 @@ int choice = 0;
 
 printf("Cache memory allocation and mapping: \n");
 while(choice != 4){
-  printf("1) Enter parameters \n");
+  printf("\n1) Enter parameters \n");
   printf("2) Access cache for reading/writing and transfer data \n");
-  printf("3) Quit\n");
+  printf("3) Print page table\n");
+  printf("4) Quit\n");
   printf("\n Enter Selection: ");
   scanf("%d", &choice);
 
   switch(choice){
-    case 1: enter_params();
+    case 1: set_params();
     break;
     case 2: mapping();
     break;
     case 3: print_page_table();
     break;
     case 4: printf("Quitting... \n");
+    break;
 
     default: printf("Invalid Entry \n");
   }
