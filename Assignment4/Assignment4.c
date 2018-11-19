@@ -79,7 +79,7 @@ void mapping()
 					pt[g + 1].vp = vpHolder;
 				}
 			}
-			printf("Virtual Address: %d maps to physical address %d", VMAddress,realAddress);
+			printf("\nVirtual Address: %d maps to physical address %d\n", VMAddress,realAddress);
 			i = num_entries-1;
 		}
 		//if theres a blank space
@@ -121,14 +121,14 @@ void print_page_table()
 /* Declare local var's */
   int i;
 /* For each valid entry in page table */
-printf("\n-----------------\n");
+printf("\n---------------\n");
 printf("| VP   | PF   |\n");
-printf("-------------------\n");
+printf("---------------\n");
 for (i = 0; i < num_entries; i++) {
   if (pt[i].pf != -1 && pt[i].vp != -1) {//To avoid unnecessary printing
     printf("| %d    |", pt[i].vp);
     printf(" %d    |", pt[i].pf);
-    printf("\n----------------------\n");
+    printf("\n---------------\n");
   }
 }
 	/* print virtual page number and corresponding page frame number */
@@ -150,7 +150,7 @@ while(choice != 4){
   printf("2) Access cache for reading/writing and transfer data \n");
   printf("3) Print page table\n");
   printf("4) Quit\n");
-  printf("\n Enter Selection: ");
+  printf("\nEnter Selection: ");
   scanf("%d", &choice);
 
   switch(choice){
